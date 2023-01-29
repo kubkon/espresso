@@ -41,8 +41,7 @@
 #include "espresso.h"
 
 /* see if the cube has a full row of 1's (with respect to cof) */
-bool full_row(p, cof)
-IN register pcube p, cof;
+bool full_row(register pset p, register pset cof)
 {
     register int i = LOOP(p);
     do if ((p[i] | cof[i]) != cube.fullset[i]) return FALSE; while (--i > 0);
@@ -53,8 +52,7 @@ IN register pcube p, cof;
     cdist0 -- return TRUE if a and b are distance 0 apart
 */
 
-bool cdist0(a, b)
-register pcube a, b;
+bool cdist0(register pset a, register pset b)
 {
  {  /* Check binary variables */
     register int w, last; register unsigned int x;
@@ -94,8 +92,7 @@ register pcube a, b;
     exceeds 1, the value 2 is returned.
 */
 
-int cdist01(a, b)
-register pset a, b;
+int cdist01(register pset a, register pset b)
 {
     int dist = 0;
 
@@ -105,14 +102,14 @@ register pset a, b;
 
 	/* Check the partial word of binary variables */
 	x = a[last] & b[last];
-	if (x = ~ (x | x >> 1) & cube.inmask)
+	if ((x = ~ (x | x >> 1) & cube.inmask))
 	    if ((dist = count_ones(x)) > 1)
 		return 2;
 
 	/* Check the full words of binary variables */
 	for(w = 1; w < last; w++) {
 	    x = a[w] & b[w];
-	    if (x = ~ (x | x >> 1) & DISJOINT)
+	    if ((x = ~ (x | x >> 1) & DISJOINT))
 		if (dist == 1 || (dist += count_ones(x)) > 1)
 		    return 2;
 	}
@@ -139,8 +136,7 @@ register pset a, b;
     number of null variables in their intersection).
 */
 
-int cdist(a, b)
-register pset a, b;
+int cdist(register pset a, register pset b)
 {
     int dist = 0;
 
@@ -150,13 +146,13 @@ register pset a, b;
 
 	/* Check the partial word of binary variables */
 	x = a[last] & b[last];
-	if (x = ~ (x | x >> 1) & cube.inmask)
+	if ((x = ~ (x | x >> 1) & cube.inmask))
 	    dist = count_ones(x);
 
 	/* Check the full words of binary variables */
 	for(w = 1; w < last; w++) {
 	    x = a[w] & b[w];
-	    if (x = ~ (x | x >> 1) & DISJOINT)
+	    if ((x = ~ (x | x >> 1) & DISJOINT))
 		dist += count_ones(x);
 	}
     }
@@ -180,9 +176,7 @@ register pset a, b;
     force_lower -- Determine which variables of a do not intersect b.
 */
 
-pset force_lower(xlower, a, b)
-INOUT pset xlower;
-IN register pset a, b;
+pset force_lower(pset xlower, register pset a, register pset b)
 {
 
  {  /* Check binary variables (if any) */
@@ -191,13 +185,13 @@ IN register pset a, b;
 
 	/* Check the partial word of binary variables */
 	x = a[last] & b[last];
-	if (x = ~(x | x >> 1) & cube.inmask)
+	if ((x = ~(x | x >> 1) & cube.inmask))
 	    xlower[last] |= (x | (x << 1)) & a[last];
 
 	/* Check the full words of binary variables */
 	for(w = 1; w < last; w++) {
 	    x = a[w] & b[w];
-	    if (x = ~(x | x >> 1) & DISJOINT)
+	    if ((x = ~(x | x >> 1) & DISJOINT))
 		xlower[w] |= (x | (x << 1)) & a[w];
 	}
     }
@@ -231,9 +225,7 @@ IN register pset a, b;
     represents the consensus when a and b are distance 1 apart.
 */
 
-void consensus(r, a, b)
-INOUT pcube r;
-IN register pcube a, b;
+void consensus(pset r, register pset a, register pset b)
 {
     INLINEset_clear(r, cube.size);
 
@@ -243,13 +235,13 @@ IN register pcube a, b;
 
 	/* Check the partial word of binary variables */
 	r[last] = x = a[last] & b[last];
-	if (x = ~(x | x >> 1) & cube.inmask)
+	if ((x = ~(x | x >> 1) & cube.inmask))
 	    r[last] |= (x | (x << 1)) & (a[last] | b[last]);
 
 	/* Check the full words of binary variables */
 	for(w = 1; w < last; w++) {
 	    r[w] = x = a[w] & b[w];
-	    if (x = ~(x | x >> 1) & DISJOINT)
+	    if ((x = ~(x | x >> 1) & DISJOINT))
 		r[w] |= (x | (x << 1)) & (a[w] | b[w]);
 	}
     }
@@ -264,7 +256,7 @@ IN register pcube a, b;
 	last = cube.last_word[var];
 	empty = TRUE;
 	for(w = cube.first_word[var]; w <= last; w++)
-	    if (x = a[w] & b[w] & mask[w])
+	    if ((x = a[w] & b[w] & mask[w]))
 		empty = FALSE, r[w] |= x;
 	if (empty)
 	    for(w = cube.first_word[var]; w <= last; w++)
@@ -278,10 +270,9 @@ IN register pcube a, b;
     the cube, or return -1 if there are none or more than 2.
 */
 
-int cactive(a)
-register pcube a;
+int cactive(register pset a)
 {
-    int active = -1, dist = 0, bit_index();
+    int active = -1, dist = 0, bit_index(register unsigned int a);
 
  {  /* Check binary variables */
     register int w, last;
@@ -290,7 +281,7 @@ register pcube a;
 
 	/* Check the partial word of binary variables */
 	x = a[last];
-	if (x = ~ (x & x >> 1) & cube.inmask) {
+	if ((x = ~ (x & x >> 1) & cube.inmask)) {
 	    if ((dist = count_ones(x)) > 1)
 		return -1;		/* more than 2 active variables */
 	    active = (last-1)*(BPI/2) + bit_index(x) / 2;
@@ -299,7 +290,7 @@ register pcube a;
 	/* Check the full words of binary variables */
 	for(w = 1; w < last; w++) {
 	    x = a[w];
-	    if (x = ~ (x & x >> 1) & DISJOINT) {
+	    if ((x = ~ (x & x >> 1) & DISJOINT)) {
 		if ((dist += count_ones(x)) > 1)
 		    return -1;		/* more than 2 active variables */
 		active = (w-1)*(BPI/2) + bit_index(x) / 2;
@@ -331,8 +322,7 @@ register pcube a;
     active variables include variables that are empty;
 */
 
-bool ccommon(a, b, cof)
-register pcube a, b, cof;
+bool ccommon(register pset a, register pset b, register pset cof)
 {
  {  /* Check binary variables */
     int last;
@@ -392,8 +382,7 @@ register pcube a, b, cof;
 */
 
 /* descend -- comparison for descending sort on set size */
-int descend(a, b)
-pset *a, *b;
+int descend(pset *a, pset *b)
 {
     register pset a1 = *a, b1 = *b;
     if (SIZE(a1) > SIZE(b1)) return -1;
@@ -408,8 +397,7 @@ pset *a, *b;
 }
 
 /* ascend -- comparison for ascending sort on set size */
-int ascend(a, b)
-pset *a, *b;
+int ascend(pset *a, pset *b)
 {
     register pset a1 = *a, b1 = *b;
     if (SIZE(a1) > SIZE(b1)) return 1;
@@ -425,8 +413,7 @@ pset *a, *b;
 
 
 /* lex_order -- comparison for "lexical" ordering of cubes */
-int lex_order(a, b)
-pset *a, *b;
+int lex_order(pset *a, pset *b)
 {
     register pset a1 = *a, b1 = *b;
     register int i = LOOP(a1);
@@ -438,8 +425,7 @@ pset *a, *b;
 
 
 /* d1_order -- comparison for distance-1 merge routine */
-int d1_order(a, b)
-pset *a, *b;
+int d1_order(pset *a, pset *b)
 {
     register pset a1 = *a, b1 = *b, c1 = cube.temp[0];
     register int i = LOOP(a1);
@@ -455,8 +441,7 @@ pset *a, *b;
 /* desc1 -- comparison (without indirection) for descending sort */
 /* also has effect of handling NULL pointers,and a NULL pointer has smallest
 order */
-int desc1(a, b)
-register pset a, b;
+int desc1(register pset a, register pset b)
 {
     if (a == (pset) NULL)
 	return (b == (pset) NULL) ? 0 : 1;

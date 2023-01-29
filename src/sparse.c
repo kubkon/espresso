@@ -11,8 +11,7 @@
 
 #include "espresso.h"
 
-pcover make_sparse(F, D, R)
-pcover F, D, R;
+pcover make_sparse(pset_family F, pset_family D, pset_family R)
 {
     cost_t cost, best_cost;
 
@@ -48,8 +47,7 @@ pcover F, D, R;
 */
 
 pcover
-mv_reduce(F, D)
-pcover F, D;
+mv_reduce(pset_family F, pset_family D)
 {
     register int i, var;
     register pcube p, p1, last;

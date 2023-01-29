@@ -21,9 +21,7 @@
  * 	signature cube
  */
 pcube
-get_sigma(R,c)
-pcover R;
-register pcube c;
+get_sigma(pset_family R, register pset c)
 {
 	pcover BB;
 	pcube out_part_r,s;
@@ -74,8 +72,7 @@ register pcube c;
 
 /* set_not: flip 0 to 1 and 1 to 0 */
 void
-set_not(c)
-pcube c;
+set_not(pset c)
 {
 	INLINEset_diff(c,cube.fullset,c);
 }

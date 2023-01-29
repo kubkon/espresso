@@ -1,7 +1,6 @@
 #include "espresso.h"
 
-map_dcset(PLA)
-pPLA PLA;
+void map_dcset(pPLA PLA)
 {
     int var, i;
     pcover Tplus, Tminus, Tplusbar, Tminusbar;
@@ -74,8 +73,7 @@ pPLA PLA;
     PLA->D = sf_delc(PLA->D, 2*var, 2*var+1);
 }
 
-map_output_symbolic(PLA)
-pPLA PLA;
+void map_output_symbolic(pPLA PLA)
 {
     pset_family newF, newD;
     pset compress;
@@ -178,12 +176,7 @@ pPLA PLA;
 }
 
 
-find_inputs(A, PLA, list, base, value, newF, newD)
-pcover A;
-pPLA PLA;
-symbolic_list_t *list;
-int base, value;
-pcover *newF, *newD;
+void find_inputs(pset_family A, pPLA PLA, symbolic_list_t *list, int base, int value, pset_family *newF, pset_family *newD)
 {
     pcover S, S1;
     register pset last, p;
@@ -273,8 +266,7 @@ pcover *newF, *newD;
 }
 #endif
 
-map_symbolic(PLA)
-pPLA PLA;
+void map_symbolic(pPLA PLA)
 {
     symbolic_t *p1;
     symbolic_list_t *p2;
@@ -355,10 +347,7 @@ pPLA PLA;
 }
 
 
-pcover map_symbolic_cover(T, list, base)
-pcover T;
-symbolic_list_t *list;
-int base;
+pcover map_symbolic_cover(pset_family T, symbolic_list_t *list, int base)
 {
     pset last, p;
     foreach_set(T, last, p) {
@@ -368,11 +357,11 @@ int base;
 }
 
 
-form_bitvector(p, base, value, list)
-pset p;			/* old cube, looking at binary variables */
-int base;		/* where in mv cube the new variable starts */
-int value;		/* current value for this recursion */
-symbolic_list_t *list;	/* current place in the symbolic list */
+void form_bitvector(pset p, int base, int value, symbolic_list_t *list)
+       			/* old cube, looking at binary variables */
+         		/* where in mv cube the new variable starts */
+          		/* current value for this recursion */
+                      	/* current place in the symbolic list */
 {
     if (list == NIL(symbolic_list_t)) {
 	set_insert(p, base + value);
@@ -395,11 +384,7 @@ symbolic_list_t *list;	/* current place in the symbolic list */
 }
 
 
-symbolic_hack_labels(PLA, list, compress, new_size, old_size, size_added)
-pPLA PLA;
-symbolic_t *list;
-pset compress;
-int new_size, old_size, size_added;
+void symbolic_hack_labels(pPLA PLA, symbolic_t *list, pset compress, int new_size, int old_size, int size_added)
 {
     int i, base;
     char **oldlabel;
@@ -454,8 +439,7 @@ int new_size, old_size, size_added;
     FREE(oldlabel);
 }
 
-static pcover fsm_simplify(F)
-pcover F;
+static pcover fsm_simplify(pset_family F)
 {
     pcover D, R;
     D = new_cover(0);
@@ -467,9 +451,7 @@ pcover F;
 }
 
 
-disassemble_fsm(PLA, verbose_mode)
-pPLA PLA;
-int verbose_mode;
+void disassemble_fsm(pPLA PLA, int verbose_mode)
 {
     int nin, nstates, nout;
     int before, after, present_state, next_state, i, j;

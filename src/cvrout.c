@@ -5,10 +5,7 @@
 
 #include "espresso.h"
 
-void fprint_pla(fp, PLA, output_type)
-INOUT FILE *fp;
-IN pPLA PLA;
-IN int output_type;
+void fprint_pla(FILE *fp, pPLA PLA, int output_type)
 {
     int num;
     register pcube last, p;
@@ -71,10 +68,7 @@ IN int output_type;
     }
 }
 
-void fpr_header(fp, PLA, output_type)
-FILE *fp;
-pPLA PLA;
-int output_type;
+void fpr_header(FILE *fp, pPLA PLA, int output_type)
 {
     register int i, var;
     int first, last;
@@ -142,8 +136,7 @@ int output_type;
     }
 }
 
-void pls_output(PLA)
-IN pPLA PLA;
+void pls_output(pPLA PLA)
 {
     register pcube last, p;
 
@@ -159,9 +152,7 @@ IN pPLA PLA;
 }
 
 
-void pls_group(PLA, fp)
-pPLA PLA;
-FILE *fp;
+void pls_group(pPLA PLA, FILE *fp)
 {
     int var, i, col, len;
 
@@ -183,9 +174,7 @@ FILE *fp;
 }
 
 
-void pls_label(PLA, fp)
-pPLA PLA;
-FILE *fp;
+void pls_label(pPLA PLA, FILE *fp)
 {
     int var, i, col, len;
 
@@ -207,8 +196,7 @@ FILE *fp;
 /*
     eqntott output mode -- output algebraic equations
 */
-void eqn_output(PLA)
-pPLA PLA;
+void eqn_output(pPLA PLA)
 {
     register pcube p, last;
     register int i, var, col, len;
@@ -257,9 +245,7 @@ pPLA PLA;
 }
 
 
-char *fmt_cube(c, out_map, s)
-register pcube c;
-register char *out_map, *s;
+char *fmt_cube(register pset c, register char *out_map, register char *s)
 {
     register int i, var, last, len = 0;
 
@@ -284,10 +270,7 @@ register char *out_map, *s;
 }
 
 
-void print_cube(fp, c, out_map)
-register FILE *fp;
-register pcube c;
-register char *out_map;
+void print_cube(register FILE *fp, register pset c, register char *out_map)
 {
     register int i, var, ch;
     int last;
@@ -315,10 +298,7 @@ register char *out_map;
 }
 
 
-void print_expanded_cube(fp, c, phase)
-register FILE *fp;
-register pcube c;
-pcube phase;
+void print_expanded_cube(register FILE *fp, register pset c, pset phase)
 {
     register int i, var, ch;
     char *out_map;
@@ -352,16 +332,13 @@ pcube phase;
 }
 
 
-char *pc1(c) pcube c;
+char *pc1(pset c)
 {static char s1[256];return fmt_cube(c, "01", s1);}
-char *pc2(c) pcube c;
+char *pc2(pset c)
 {static char s2[256];return fmt_cube(c, "01", s2);}
 
 
-void debug_print(T, name, level)
-pcube *T;
-char *name;
-int level;
+void debug_print(pset *T, char *name, int level)
 {
     register pcube *T1, p, temp;
     register int cnt;
@@ -380,10 +357,7 @@ int level;
 }
 
 
-void debug1_print(T, name, num)
-pcover T;
-char *name;
-int num;
+void debug1_print(pset_family T, char *name, int num)
 {
     register int cnt = 1;
     register pcube p, last;
@@ -397,8 +371,7 @@ int num;
 }
 
 
-void cprint(T)
-pcover T;
+void cprint(pset_family T)
 {
     register pcube p, last;
 
@@ -407,8 +380,7 @@ pcover T;
 }
 
 
-int makeup_labels(PLA)
-pPLA PLA;
+void makeup_labels(pPLA PLA)
 {
     int var, i, ind;
 
@@ -432,9 +404,7 @@ pPLA PLA;
 }
 
 
-kiss_output(fp, PLA)
-FILE *fp;
-pPLA PLA;
+void kiss_output(FILE *fp, pPLA PLA)
 {
     register pset last, p;
 
@@ -447,11 +417,7 @@ pPLA PLA;
 }
 
 
-kiss_print_cube(fp, PLA, p, out_string)
-FILE *fp;
-pPLA PLA;
-pcube p;
-char *out_string;
+void kiss_print_cube(FILE *fp, pPLA PLA, pset p, char *out_string)
 {
     register int i, var;
     int part, x;
@@ -494,10 +460,7 @@ char *out_string;
     putc('\n', fp);
 }
 
-output_symbolic_constraints(fp, PLA, output_symbolic)
-FILE *fp;
-pPLA PLA;
-int output_symbolic;
+void output_symbolic_constraints(FILE *fp, pPLA PLA, int output_symbolic)
 {
     pset_family A;
     register int i, j;

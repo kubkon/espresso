@@ -38,8 +38,7 @@
 
 #include "espresso.h"
 
-pcover espresso(F, D1, R)
-pcover F, D1, R;
+pcover espresso(pset_family F, pset_family D1, pset_family R)
 {
     pcover E, D, Fsave;
     pset last, p;

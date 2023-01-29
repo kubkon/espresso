@@ -1,8 +1,7 @@
 #include "espresso.h"
 
 
-find_equiv_outputs(PLA)
-pPLA PLA;
+void find_equiv_outputs(pPLA PLA)
 {
     int i, j, ipart, jpart, some_equiv;
     pcover *R, *F;
@@ -59,8 +58,7 @@ pPLA PLA;
 
 
 
-int check_equiv(f1, f2)
-pcover f1, f2;
+int check_equiv(pset_family f1, pset_family f2)
 {
     register pcube *f1list, *f2list;
     register pcube p, last;

@@ -1,3 +1,4 @@
+#include "port.h"
 #include "utility.h"
 #include "sparse.h"
 
@@ -103,7 +104,7 @@ extern sm_col *sm_col_freelist;
 #endif
 
 
-extern void sm_row_remove_element();
-extern void sm_col_remove_element();
+extern void sm_row_remove_element(register sm_row *prow, register sm_element *p);
+extern void sm_col_remove_element(register sm_col *pcol, register sm_element *p);
 
 /* LINTLIBRARY */

@@ -22,19 +22,13 @@
  * Output:
  *	Return canonical cover of the essential signature cube
  */
-pcover
-find_canonical_cover(F1,D,R)
-pcover F1,D,R;
+pcover find_canonical_cover(pset_family F1, pset_family D, pset_family R)
 {
 	pcover F;
 	pcover E,ESC;
 	pcover COVER;
-	pcube last,p,s;
 	pcube c;
-	int count = 0;
-	int last_fcount = F1->count;
 	pcube d, *extended_dc;
-	pcube sigma_c;
 
 	F = sf_save(F1);
 	E = new_cover(D->count);

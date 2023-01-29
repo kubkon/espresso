@@ -1,3 +1,4 @@
+#include "port.h"
 #include "sparse_int.h"
 
 
@@ -5,7 +6,7 @@
  *  allocate a new row vector 
  */
 sm_row *
-sm_row_alloc()
+sm_row_alloc(void)
 {
     register sm_row *prow;
 
@@ -37,8 +38,7 @@ sm_row_alloc()
  *  compile flag ...
  */
 void
-sm_row_free(prow)
-register sm_row *prow;
+sm_row_free(register sm_row *prow)
 {
 #if defined(FAST_AND_LOOSE) && ! defined(COLS)
     if (prow->first_col != NIL(sm_element)) {
@@ -66,8 +66,7 @@ register sm_row *prow;
  *  duplicate an existing row
  */
 sm_row *
-sm_row_dup(prow)
-register sm_row *prow;
+sm_row_dup(register sm_row *prow)
 {
     register sm_row *pnew;
     register sm_element *p;
@@ -84,9 +83,7 @@ register sm_row *prow;
  *  insert an element into a row vector 
  */
 sm_element *
-sm_row_insert(prow, col)
-register sm_row *prow;
-register int col;
+sm_row_insert(register sm_row *prow, register int col)
 {
     register sm_element *test, *element;
 
@@ -110,9 +107,7 @@ register int col;
  *  remove an element from a row vector 
  */
 void
-sm_row_remove(prow, col)
-register sm_row *prow;
-register int col;
+sm_row_remove(register sm_row *prow, register int col)
 {
     register sm_element *p;
 
@@ -130,9 +125,7 @@ register int col;
  *  find an element (if it is in the row vector)
  */
 sm_element *
-sm_row_find(prow, col)
-sm_row *prow;
-int col;
+sm_row_find(sm_row *prow, int col)
 {
     register sm_element *p;
 
@@ -149,8 +142,7 @@ int col;
  *  return 1 if row p2 contains row p1; 0 otherwise
  */
 int 
-sm_row_contains(p1, p2)
-sm_row *p1, *p2;
+sm_row_contains(sm_row *p1, sm_row *p2)
 {
     register sm_element *q1, *q2;
 
@@ -174,8 +166,7 @@ sm_row *p1, *p2;
  *  return 1 if row p1 and row p2 share an element in common
  */
 int 
-sm_row_intersects(p1, p2)
-sm_row *p1, *p2;
+sm_row_intersects(sm_row *p1, sm_row *p2)
 {
     register sm_element *q1, *q2;
 
@@ -202,8 +193,7 @@ sm_row *p1, *p2;
  *  compare two rows, lexical ordering
  */
 int 
-sm_row_compare(p1, p2)
-sm_row *p1, *p2;
+sm_row_compare(sm_row *p1, sm_row *p2)
 {
     register sm_element *q1, *q2;
 
@@ -231,8 +221,7 @@ sm_row *p1, *p2;
  *  return the intersection
  */
 sm_row *
-sm_row_and(p1, p2)
-sm_row *p1, *p2;
+sm_row_and(sm_row *p1, sm_row *p2)
 {
     register sm_element *q1, *q2;
     register sm_row *result;
@@ -263,9 +252,7 @@ sm_row *p1, *p2;
 }
 
 int 
-sm_row_hash(prow, modulus)
-sm_row *prow;
-int modulus;
+sm_row_hash(sm_row *prow, int modulus)
 {
     register int sum;
     register sm_element *p;
@@ -281,9 +268,7 @@ int modulus;
  *  remove an element from a row vector (given a pointer to the element) 
  */
 void
-sm_row_remove_element(prow, p)
-register sm_row *prow;
-register sm_element *p;
+sm_row_remove_element(register sm_row *prow, register sm_element *p)
 {
     dll_unlink(p, prow->first_col, prow->last_col, 
 			next_col, prev_col, prow->length);
@@ -292,9 +277,7 @@ register sm_element *p;
 
 
 void
-sm_row_print(fp, prow)
-FILE *fp;
-sm_row *prow;
+sm_row_print(FILE *fp, sm_row *prow)
 {
     sm_element *p;
 

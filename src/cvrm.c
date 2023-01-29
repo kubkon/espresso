@@ -9,11 +9,7 @@
 #include "espresso.h"
 
 
-static void cb_unravel(c, start, end, startbase, B1)
-IN register pcube c;
-IN int start, end;
-IN pcube startbase;
-INOUT pcover B1;
+static void cb_unravel(register pset c, int start, int end, pset startbase, pset_family B1)
 {
     pcube base = cube.temp[0], p, last;
     int expansion, place, skip, var, size, offset;
@@ -62,9 +58,7 @@ INOUT pcover B1;
 }
 
 
-pcover unravel_range(B, start, end)
-IN pcover B;
-IN int start, end;
+pcover unravel_range(pset_family B, int start, int end)
 {
     pcover B1;
     int var, total_size, expansion, size;
@@ -98,37 +92,31 @@ IN int start, end;
 }
 
 
-pcover unravel(B, start)
-IN pcover B;
-IN int start;
+pcover unravel(pset_family B, int start)
 {
     return unravel_range(B, start, cube.num_vars-1);
 }
 
 /* lex_sort -- sort cubes in a standard lexical fashion */
-pcover lex_sort(T)
-pcover T;
+pcover lex_sort(pset_family T)
 {
-    pcover T1 = sf_unlist(sf_sort(T, lex_order), T->count, T->sf_size);
+    pcover T1 = sf_unlist(sf_sort(T, (qsort_compare_func) lex_order), T->count, T->sf_size);
     free_cover(T);
     return T1;
 }
 
 
 /* size_sort -- sort cubes by their size */
-pcover size_sort(T)
-pcover T;
+pcover size_sort(pset_family T)
 {
-    pcover T1 = sf_unlist(sf_sort(T, descend), T->count, T->sf_size);
+    pcover T1 = sf_unlist(sf_sort(T, (qsort_compare_func) descend), T->count, T->sf_size);
     free_cover(T);
     return T1;
 }
 
 
 /*  mini_sort -- sort cubes according to the heuristics of mini */
-pcover mini_sort(F, compare)
-pcover F;
-int (*compare)();
+pcover mini_sort(pset_family F, qsort_compare_func compare)
 {
     register int *count, cnt, n = cube.size, i;
     register pcube p, last;
@@ -149,7 +137,7 @@ int (*compare)();
     FREE(count);
 
     /* use qsort to sort the array */
-    qsort((char *) (F1 = sf_list(F)), F->count, sizeof(pcube), compare);
+    qsort((char *) (F1 = sf_list(F)), F->count, sizeof(pcube), (qsort_compare_func) compare);
     F_sorted = sf_unlist(F1, F->count, F->sf_size);
     free_cover(F);
 
@@ -158,8 +146,7 @@ int (*compare)();
 
 
 /* sort_reduce -- Espresso strategy for ordering the cubes before reduction */
-pcover sort_reduce(T)
-IN pcover T;
+pcover sort_reduce(pset_family T)
 {
     register pcube p, last, largest = NULL;
     register int bestsize = -1, size, n = cube.num_vars;
@@ -177,15 +164,14 @@ IN pcover T;
     foreach_set(T, last, p)
 	PUTSIZE(p, ((n - cdist(largest,p)) << 7) + MIN(set_ord(p),127));
 
-    qsort((char *) (T1 = sf_list(T)), T->count, sizeof(pcube), descend);
+    qsort((char *) (T1 = sf_list(T)), T->count, sizeof(pcube), (qsort_compare_func) descend);
     T_sorted = sf_unlist(T1, T->count, T->sf_size);
     free_cover(T);
 
     return T_sorted;
 }
 
-pcover random_order(F)
-register pcover F;
+pcover random_order(register pset_family F)
 {
     pset temp;
     register int i, k;
@@ -219,10 +205,10 @@ register pcover F;
  *  is the size of the partition; if not, A and B
  *  are undefined and the return value is 0
  */
-int cubelist_partition(T, A, B, comp_debug)
-pcube *T;			/* a list of cubes */
-pcube **A, **B;			/* cubelist of partition and remainder */
-unsigned int comp_debug;
+int cubelist_partition(pset *T, pset **A, pset **B, unsigned int comp_debug)
+         			/* a list of cubes */
+               			/* cubelist of partition and remainder */
+                        
 {
     register pcube *T1, p, seed, cof;
     pcube *A1, *B1;
@@ -297,9 +283,7 @@ unsigned int comp_debug;
 /*
  *  quick cofactor against a single output function
  */
-pcover cof_output(T, i)
-pcover T;
-register int i;
+pcover cof_output(pset_family T, register int i)
 {
     pcover T1;
     register pcube p, last, pdest, mask;
@@ -320,9 +304,7 @@ register int i;
 /*
  *  quick intersection against a single output function
  */
-pcover uncof_output(T, i)
-pcover T;
-int i;
+pcover uncof_output(pset_family T, int i)
 {
     register pcube p, last, mask;
 
@@ -348,10 +330,7 @@ int i;
  *
  *  Each function returns TRUE if process is to continue
  */
-foreach_output_function(PLA, func, func1)
-pPLA PLA;
-int (*func)();
-int (*func1)();
+void foreach_output_function(pPLA PLA, int (*func) (pPLA, int), int (*func1) (pPLA, int))
 {
     pPLA PLA1;
     int i;
@@ -395,9 +374,7 @@ static pcube phase;
 /*
  *  minimize each output function individually
  */
-void so_espresso(PLA, strategy)
-pPLA PLA;
-int strategy;
+void so_espresso(pPLA PLA, int strategy)
 {
     Fmin = new_cover(PLA->F->count);
     if (strategy == 0) {
@@ -414,9 +391,7 @@ int strategy;
  *  minimize each output function, choose function or complement based on the
  *  one with the fewer number of terms
  */
-void so_both_espresso(PLA, strategy)
-pPLA PLA;
-int strategy;
+void so_both_espresso(pPLA PLA, int strategy)
 {
     phase = set_save(cube.fullset);
     Fmin = new_cover(PLA->F->count);
@@ -431,9 +406,7 @@ int strategy;
 }
 
 
-int so_do_espresso(PLA, i)
-pPLA PLA;
-int i;
+int so_do_espresso(pPLA PLA, int i)
 {
     char word[32];
 
@@ -445,9 +418,7 @@ int i;
 }
 
 
-int so_do_exact(PLA, i)
-pPLA PLA;
-int i;
+int so_do_exact(pPLA PLA, int i)
 {
     char word[32];
 
@@ -460,9 +431,7 @@ int i;
 
 
 /*ARGSUSED*/
-int so_save(PLA, i)
-pPLA PLA;
-int i;
+int so_save(pPLA PLA, int i)
 {
     Fmin = sf_append(Fmin, PLA->F);	/* disposes of PLA->F */
     PLA->F = NULL;
@@ -470,9 +439,7 @@ int i;
 }
 
 
-int so_both_do_espresso(PLA, i)
-pPLA PLA;
-int i;
+int so_both_do_espresso(pPLA PLA, int i)
 {
     char word[32];
 
@@ -490,9 +457,7 @@ int i;
 }
 
 
-int so_both_do_exact(PLA, i)
-pPLA PLA;
-int i;
+int so_both_do_exact(pPLA PLA, int i)
 {
     char word[32];
 
@@ -510,9 +475,7 @@ int i;
 }
 
 
-int so_both_save(PLA, i)
-pPLA PLA;
-int i;
+int so_both_save(pPLA PLA, int i)
 {
     if (PLA->F->count > PLA->R->count) {
 	sf_free(PLA->F);

@@ -15,8 +15,7 @@
  */
 
 pcover
-signature_minimize_exact(ESCubes,ESSet)
-pcover ESCubes,ESSet;
+signature_minimize_exact(pset_family ESCubes, pset_family ESSet)
 {
 	pcube p;
 	sm_matrix *table;
@@ -55,8 +54,7 @@ pcover ESCubes,ESSet;
 }
 
 sm_matrix *
-signature_form_table(ESCubes, ESSet)
-pcover ESCubes, ESSet;
+signature_form_table(pset_family ESCubes, pset_family ESSet)
 {
 	sm_matrix *table;
 	int row,column;

@@ -1,8 +1,8 @@
 #include "espresso.h"
 
 
-static void dump_irredundant();
-static pcover do_minimize();
+static void dump_irredundant(pset_family E, pset_family Rt, pset_family Rp, sm_matrix *table);
+static pcover do_minimize(pset_family F, pset_family D, pset_family R, int exact_cover, int weighted);
 
 
 /*
@@ -15,18 +15,14 @@ static pcover do_minimize();
  */
 
 pcover
-minimize_exact(F, D, R, exact_cover)
-pcover F, D, R;
-int exact_cover;
+minimize_exact(pset_family F, pset_family D, pset_family R, int exact_cover)
 {
     return do_minimize(F, D, R, exact_cover, /*weighted*/ 0);
 }
 
 
 pcover
-minimize_exact_literals(F, D, R, exact_cover)
-pcover F, D, R;
-int exact_cover;
+minimize_exact_literals(pset_family F, pset_family D, pset_family R, int exact_cover)
 {
     return do_minimize(F, D, R, exact_cover, /*weighted*/ 1);
 }
@@ -34,10 +30,7 @@ int exact_cover;
 
 
 static pcover
-do_minimize(F, D, R, exact_cover, weighted)
-pcover F, D, R;
-int exact_cover;
-int weighted;
+do_minimize(pset_family F, pset_family D, pset_family R, int exact_cover, int weighted)
 {
     pcover newF, E, Rt, Rp;
     pset p, last;
@@ -111,9 +104,7 @@ int weighted;
 }
 
 static void
-dump_irredundant(E, Rt, Rp, table)
-pcover E, Rt, Rp;
-sm_matrix *table;
+dump_irredundant(pset_family E, pset_family Rt, pset_family Rp, sm_matrix *table)
 {
     FILE *fp_pi_table, *fp_primes;
     pPLA PLA;

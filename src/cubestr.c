@@ -12,7 +12,7 @@
     If a part_size is < 0, then the field size is abs(part_size) and the
     field read from the input is symbolic.
 */
-void cube_setup()
+void cube_setup(void)
 {
     register int i, var;
     register pcube p;
@@ -80,7 +80,7 @@ void cube_setup()
     (I wanted to call this cube_setdown, but that violates the 8-character
     external routine limit on the IBM !)
 */
-void setdown_cube()
+void setdown_cube(void)
 {
     register int i, var;
 
@@ -119,7 +119,7 @@ void setdown_cube()
 }
 
 
-void save_cube_struct()
+void save_cube_struct(void)
 {
     temp_cube_save = cube;              /* structure copy ! */
     temp_cdata_save = cdata;            /*      ""          */
@@ -136,7 +136,7 @@ void save_cube_struct()
 }
 
 
-void restore_cube_struct()
+void restore_cube_struct(void)
 {
     cube = temp_cube_save;              /* structure copy ! */
     cdata = temp_cdata_save;            /*      ""          */

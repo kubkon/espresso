@@ -2,8 +2,7 @@
 
 
 pset
-do_sm_minimum_cover(A)
-pset_family A;
+do_sm_minimum_cover(pset_family A)
 {
     sm_matrix *M;
     sm_row *sparse_cover;

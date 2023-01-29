@@ -2,9 +2,7 @@
 
 
 /* cost -- compute the cost of a cover */
-void cover_cost(F, cost)
-IN pcover F;
-INOUT pcost cost;
+void cover_cost(pset_family F, pcost cost)
 {
     register pcube p, last;
     pcube *T;
@@ -44,8 +42,7 @@ INOUT pcost cost;
 
 
 /* fmt_cost -- return a string which reports the "cost" of a cover */
-char *fmt_cost(cost)
-IN pcost cost;
+char *fmt_cost(pcost cost)
 {
     static char s[200];
 
@@ -61,8 +58,7 @@ IN pcost cost;
 }
 
 
-char *print_cost(F)
-IN pcover F;
+char *print_cost(pset_family F)
 {
     cost_t cost;
     cover_cost(F, &cost);
@@ -71,8 +67,7 @@ IN pcover F;
 
 
 /* copy_cost -- copy a cost function from s to d */
-void copy_cost(s, d)
-pcost s, d;
+void copy_cost(pcost s, pcost d)
 {
     d->cubes = s->cubes;
     d->in = s->in;
@@ -84,9 +79,7 @@ pcost s, d;
 
 
 /* size_stamp -- print single line giving the size of a cover */
-void size_stamp(T, name)
-IN pcover T;
-IN char *name;
+void size_stamp(pset_family T, char *name)
 {
     printf("# %s\tCost is %s\n", name, print_cost(T));
     (void) fflush(stdout);
@@ -94,10 +87,7 @@ IN char *name;
 
 
 /* print_trace -- print a line reporting size and time after a function */
-void print_trace(T, name, time)
-pcover T;
-char *name;
-long time;
+void print_trace(pset_family T, char *name, long int time)
 {
     printf("# %s\tTime was %s, cost is %s\n",
 	name, print_time(time), print_cost(T));
@@ -106,11 +96,7 @@ long time;
 
 
 /* totals -- add time spent in the function into the totals */
-void totals(time, i, T, cost)
-long time;
-int i;
-pcover T;
-pcost cost;
+void totals(long int time, int i, pset_family T, pcost cost)
 {
     time = ptime() - time;
     total_time[i] += time;
@@ -125,8 +111,7 @@ pcost cost;
 
 
 /* fatal -- report fatal error message and take a dive */
-void fatal(s)
-char *s;
+void fatal(char *s)
 {
     fprintf(stderr, "espresso: %s\n", s);
     exit(1);

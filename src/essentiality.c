@@ -1,4 +1,3 @@
-/*
 /* Module:essentiality.c
  *	contains routines for performing essentiality test and reduction
  * Routines:
@@ -31,11 +30,6 @@ static int r_head; /* current position in  the list above */
 
 static int *reduced_c_free_list; /* c_free_list - r_free_list */
 static int reduced_c_free_count; /* active size of the above list */
-
-typedef struct {
-	int variable;
-	int free_count;
-	} VAR;
 
 static VAR *unate_list; /* List of unate variables in the reduced_c_free_list */
 static int unate_count; /* active size of the above list */
@@ -75,9 +69,7 @@ pcover COVER; /* A global bag to collect the signature cubes in the cover
  *		3. Freer Binate
  */
 pcover
-etr_order(F,E,R,c,d)
-pcover F,E,R;
-pcube c,d;
+etr_order(pset_family F, pset_family E, pset_family R, pset c, pset d)
 {
 	static int num_binary_vars;
 	int v,e0,e1;
@@ -171,8 +163,8 @@ pcube c,d;
 		}
 	}
 
-	qsort(unate_list,unate_count,sizeof(VAR),ascending);
-	qsort(binate_list,binate_count,sizeof(VAR),ascending);
+	qsort(unate_list,unate_count,sizeof(VAR),(qsort_compare_func) ascending);
+	qsort(binate_list,binate_count,sizeof(VAR),(qsort_compare_func) ascending);
 
 	variable_head = 0;
 	variable_count = 0;
@@ -204,8 +196,7 @@ pcube c,d;
 }
 
 int
-ascending(p1,p2)
-VAR *p1,*p2;
+ascending(VAR *p1, VAR *p2)
 {
 	int f1 = p1->free_count;
 	int f2 = p2->free_count;
@@ -231,10 +222,8 @@ VAR *p1,*p2;
  *	E: Extended don't care set. DC + identified ESC;
  *	R: OFFSET cover;
  */
-int
-aux_etr_order(F,E,R,c,d)
-pcover F,E,R;
-pcube c,d;
+void
+aux_etr_order(pset_family F, pset_family E, pset_family R, pset c, pset d)
 {
 	pcover  minterms;
 	pcube d_minterm;
@@ -309,8 +298,7 @@ pcube c,d;
 }
 
 pcover
-get_mins(c)
-pcube c;
+get_mins(pset c)
 {
 	pcover minterms;
 	pcube d_minterm;
@@ -334,10 +322,7 @@ pcube c;
 	return minterms;
 }
 
-print_list(n,x,name)
-int n;
-int *x;
-char *name;
+void print_list(int n, int *x, char *name)
 {
 	int i;
 	printf("%s:\n",name);

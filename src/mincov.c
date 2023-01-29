@@ -7,9 +7,9 @@
 #define USE_GIMPEL
 #define USE_INDEP_SET
 
-static int select_column();
-static void select_essential();
-static int verify_cover();
+static int select_column(sm_matrix *A, int *weight, solution_t *indep);
+static void select_essential(sm_matrix *A, solution_t *select, int *weight, int bound);
+static int verify_cover(sm_matrix *A, sm_row *cover);
 
 #define fail(why) {\
     (void) fprintf(stderr, "Fatal error: file %s, line %d\n%s\n",\
@@ -19,11 +19,11 @@ static int verify_cover();
 }
 
 sm_row *
-sm_minimum_cover(A, weight, heuristic, debug_level)
-sm_matrix *A;
-int *weight;
-int heuristic;		/* set to 1 for a heuristic covering */
-int debug_level;	/* how deep in the recursion to provide info */
+sm_minimum_cover(sm_matrix *A, int *weight, int heuristic, int debug_level)
+             
+            
+              		/* set to 1 for a heuristic covering */
+                	/* how deep in the recursion to provide info */
 {
     stats_t stats;
     solution_t *best, *select;
@@ -104,14 +104,7 @@ int debug_level;	/* how deep in the recursion to provide info */
  */
 
 solution_t * 
-sm_mincov(A, select, weight, lb, bound, depth, stats)
-sm_matrix *A;
-solution_t *select;
-int *weight;
-int lb;
-int bound;
-int depth;
-stats_t *stats;
+sm_mincov(sm_matrix *A, solution_t *select, int *weight, int lb, int bound, int depth, stats_t *stats)
 {
     sm_matrix *A1, *A2, *L, *R;
     sm_element *p;
@@ -256,10 +249,7 @@ stats_t *stats;
 }
 
 static int 
-select_column(A, weight, indep)
-sm_matrix *A;
-int *weight;
-solution_t *indep;
+select_column(sm_matrix *A, int *weight, solution_t *indep)
 {
     register sm_col *pcol;
     register sm_row *prow, *indep_cols;
@@ -313,11 +303,11 @@ solution_t *indep;
 }
 
 static void 
-select_essential(A, select, weight, bound)
-sm_matrix *A;
-solution_t *select;
-int *weight;
-int bound;			/* must beat this solution */
+select_essential(sm_matrix *A, solution_t *select, int *weight, int bound)
+             
+                   
+            
+          			/* must beat this solution */
 {
     register sm_element *p;
     register sm_row *prow, *essen;
@@ -354,9 +344,7 @@ int bound;			/* must beat this solution */
 }
 
 static int 
-verify_cover(A, cover)
-sm_matrix *A;
-sm_row *cover;
+verify_cover(sm_matrix *A, sm_row *cover)
 {
     sm_row *prow;
 

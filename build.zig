@@ -9,12 +9,7 @@ pub fn build(b: *std.build.Builder) void {
     lib.setBuildMode(mode);
     lib.linkLibC();
     lib.addIncludePath("include");
-    lib.addCSourceFiles(sources, &[_][]const u8{
-        "-std=c89",
-        "-Wno-deprecated-non-prototype",
-        "-Wno-implicit-int",
-        "-Wno-return-type",
-    });
+    lib.addCSourceFiles(sources, &[_][]const u8{"-std=c99"});
     lib.install();
     lib.installHeadersDirectory("include", "");
 }
@@ -26,6 +21,7 @@ const sources: []const []const u8 = &.{
     "src/cols.c",
     "src/compl.c",
     "src/contain.c",
+    "src/cpu_time.c",
     "src/cubestr.c",
     "src/cvrin.c",
     "src/cvrm.c",
@@ -35,6 +31,7 @@ const sources: []const []const u8 = &.{
     "src/equiv.c",
     "src/espresso.c",
     "src/essen.c",
+    "src/essentiality.c",
     "src/exact.c",
     "src/expand.c",
     "src/gasp.c",
@@ -50,15 +47,20 @@ const sources: []const []const u8 = &.{
     "src/pair.c",
     "src/part.c",
     "src/primes.c",
+    "src/prtime.c",
     "src/reduce.c",
     "src/rows.c",
     "src/set.c",
     "src/setc.c",
     "src/sharp.c",
     "src/sigma.c",
+    "src/signature.c",
+    "src/signature_exact.c",
     "src/sminterf.c",
     "src/solution.c",
     "src/sparse.c",
+    "src/strdup.c",
     "src/unate.c",
+    "src/util_signature.c",
     "src/verify.c",
 };

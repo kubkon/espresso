@@ -29,9 +29,7 @@
 
 
 /* cofactor -- compute the cofactor of a cover with respect to a cube */
-pcube *cofactor(T, c)
-IN pcube *T;
-IN register pcube c;
+pcube *cofactor(pset *T, register pset c)
 {
     pcube temp = cube.temp[0], *Tc_save, *Tc, *T1;
     register pcube p;
@@ -78,9 +76,7 @@ IN register pcube c;
     This routine has been optimized for speed.
 */
 
-pcube *scofactor(T, c, var)
-IN pcube *T, c;
-IN int var;
+pcube *scofactor(pset *T, pset c, int var)
 {
     pcube *Tc, *Tc_save;
     register pcube p, mask = cube.temp[1], *T1;
@@ -116,8 +112,7 @@ IN int var;
     return Tc_save;
 }
 
-void massive_count(T)
-IN pcube *T;
+void massive_count(pset *T)
 {
     int *count = cdata.part_zeros;
     pcube *T1;
@@ -134,7 +129,7 @@ IN pcube *T;
     register pcube p, cof = T[0], full = cube.fullset;
     for(T1 = T+2; (p = *T1++) != NULL; )
 	for(i = LOOP(p); i > 0; i--)
-	    if (val = full[i] & ~ (p[i] | cof[i])) {
+	    if ((val = full[i] & ~ (p[i] | cof[i]))) {
 		cnt = count + ((i-1) << LOGBPI);
 #if BPI == 32
 	    if (val & 0xFF000000) {
@@ -220,17 +215,25 @@ IN pcube *T;
 	if (active > mostactive)
 	    best = var, mostactive = active, mostzero = cdata.var_zeros[best],
 	    mostbalanced = maxactive;
-	else if (active == mostactive)
-	    /* secondary condition is to maximize the number zeros */
-	    /* for binary variables, this is the same as minimum # of 2's */
-	    if (cdata.var_zeros[var] > mostzero)
-		best = var, mostzero = cdata.var_zeros[best],
-		mostbalanced = maxactive;
-	    else if (cdata.var_zeros[var] == mostzero)
-		/* third condition is to pick a balanced variable */
-		/* for binary vars, this means roughly equal # 0's and 1's */
-		if (maxactive < mostbalanced)
-		    best = var, mostbalanced = maxactive;
+	else {
+	    if (active == mostactive)
+	    {
+		/* secondary condition is to maximize the number zeros */
+		/* for binary variables, this is the same as minimum # of 2's */
+		if (cdata.var_zeros[var] > mostzero)
+		    best = var, mostzero = cdata.var_zeros[best],
+		    mostbalanced = maxactive;
+		else {
+		    if (cdata.var_zeros[var] == mostzero)
+		    {
+			/* third condition is to pick a balanced variable */
+			/* for binary vars, this means roughly equal # 0's and 1's */
+			if (maxactive < mostbalanced)
+			    best = var, mostbalanced = maxactive;
+		    }
+		}
+	    }
+	}
 
 	cdata.parts_active[var] = active;
 	cdata.is_unate[var] = (active == 1);
@@ -241,10 +244,7 @@ IN pcube *T;
  }
 }
 
-int binate_split_select(T, cleft, cright, debug_flag)
-IN pcube *T;
-IN register pcube cleft, cright;
-IN int debug_flag;
+int binate_split_select(pset *T, register pset cleft, register pset cright, int debug_flag)
 {
     int best = cdata.best;
     register int i, lastbit = cube.last_part[best], halfbit = 0;
@@ -272,8 +272,7 @@ IN int debug_flag;
 }
 
 
-pcube *cube1list(A)
-pcover A;
+pcube *cube1list(pset_family A)
 {
     register pcube last, p, *plist, *list;
 
@@ -289,8 +288,7 @@ pcover A;
 }
 
 
-pcube *cube2list(A, B)
-pcover A, B;
+pcube *cube2list(pset_family A, pset_family B)
 {
     register pcube last, p, *plist, *list;
 
@@ -309,8 +307,7 @@ pcover A, B;
 }
 
 
-pcube *cube3list(A, B, C)
-pcover A, B, C;
+pcube *cube3list(pset_family A, pset_family B, pset_family C)
 {
     register pcube last, p, *plist, *list;
 
@@ -333,8 +330,7 @@ pcover A, B, C;
 }
 
 
-pcover cubeunlist(A1)
-pcube *A1;
+pcover cubeunlist(pset *A1)
 {
     register int i;
     register pcube p, pdest, cof = A1[0];
@@ -349,8 +345,7 @@ pcube *A1;
     return A;
 }
 
-simplify_cubelist(T)
-pcube *T;
+void simplify_cubelist(pset *T)
 {
     register pcube *Tdest;
     register int i, ncubes;
@@ -358,7 +353,7 @@ pcube *T;
     set_copy(cube.temp[0], T[0]);		/* retrieve cofactor */
 
     ncubes = CUBELISTSIZE(T);
-    qsort((char *) (T+2), ncubes, sizeof(pset), d1_order);
+    qsort((char *) (T+2), ncubes, sizeof(pset), (qsort_compare_func) d1_order);
 
     Tdest = T+2;
     /*   *Tdest++ = T[2];   */
