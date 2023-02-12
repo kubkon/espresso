@@ -1,12 +1,14 @@
 const std = @import("std");
 
-pub fn build(b: *std.build.Builder) void {
+pub fn build(b: *std.Build.Builder) void {
     const target = b.standardTargetOptions(.{});
-    const mode = b.standardReleaseOptions();
+    const mode = b.standardOptimizeOption(.{});
 
-    const lib = b.addStaticLibrary("espresso", null);
-    lib.setTarget(target);
-    lib.setBuildMode(mode);
+    const lib = b.addStaticLibrary(.{
+        .name = "espresso",
+        .target = target,
+        .optimize = mode,
+    });
     lib.linkLibC();
     lib.addIncludePath("include");
     lib.addCSourceFiles(sources, &[_][]const u8{"-std=c99"});
