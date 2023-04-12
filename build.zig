@@ -12,8 +12,8 @@ pub fn build(b: *std.Build.Builder) void {
     lib.linkLibC();
     lib.addIncludePath("include");
     lib.addCSourceFiles(sources, &[_][]const u8{"-std=c99"});
-    lib.install();
     lib.installHeadersDirectory("include", "");
+    b.installArtifact(lib);
 }
 
 const sources: []const []const u8 = &.{
